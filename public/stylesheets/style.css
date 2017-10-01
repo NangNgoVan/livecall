@@ -1,0 +1,17 @@
+body {
+  /*padding: 20px;*/
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+#bg-carousel {
+	/*height: 600px;*/
+}
+
+a {
+  /*color: #00B7FF;*/
+}
+
+.footer {
+	background-color: black;
+	/*height: 200px;*/
+}

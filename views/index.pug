@@ -1,0 +1,81 @@
+extends layout
+
+block content
+  //- header bar
+  nav(class="nav navbar-default navbar-fixed-top" role="navigation" style="opacity: 0.9")
+    div(class="container")
+      div(class="navbar-header")
+        button(type="button" class="navbar-toggle" data-toggle="collapse"
+          data-target="#collapsed-menu")
+          span(class="sr-only") Toggle navigation
+          span(class="icon-bar")
+          span(class="icon-bar")
+          span(class="icon-bar")
+        a(class="navbar-brand" href="#") LiveCall
+      div(class="collapse navbar-collapse" id="collapsed-menu")
+        ul(class="nav navbar-nav navbar-right")
+          li(class="active")
+            a(href="#login-modal" data-toggle="modal") Đăng nhập
+          li
+            a(href="#") Đăng ký
+
+
+  //- content
+  div(class="container-fuild")
+    div(class="row")
+      div(id="bg-carousel" class="carousel slide" data-ride="carousel")
+        //- indicators
+        ol(class="carousel-indicators")
+          li(data-target="#bg-carousel" data-slide-to="0" class="active")
+          li(data-target="#bg-carousel" data-slide-to="1")
+        div(class="carousel-inner")
+          div(class="item carousel-item active")
+            image(src="bg/bg.jpg" style="width:100%;")
+            div(class="carousel-caption")
+              h1 Cuộc gọi trực tuyến
+              p Đơn giản, dễ thực hiện
+          div(class="item carousel-item")
+            image(src="bg/bg.jpg" style="width:100%;")
+            div(class="carousel-caption")
+              h1 Hội thoại công việc
+              p Tiện dụng, tối ưu
+
+          //- carousel controls
+          a(class="left carousel-control" href="#bg-carousel" data-slide="prev")
+            span(class="glyphicon glyphicon-chevron-left")
+            span(class="sr-only") Prev
+          a(class="right carousel-control" href="#bg-carousel" data-slide="next")
+            span(class="glyphicon glyphicon-chevron-right")
+            span(class="sr-only") Next
+      //- button(class="btn btn-danger") Button
+  //- login modal
+  div(id="login-modal" class="modal fade login-modal-sm" tabindex="-1" role="dialog"
+    aria-labelledby="login-modal" aria-hidden="true")
+    div(class="modal-dialog modal-sm")
+      div(class="modal-content")
+        div(class="modal-header")
+          button(type="button" class="close" data-dismiss="modal")
+            span(aria-hidden="true") &times;
+            span(class="sr-only") Close
+          h4(class="modal-title" id="login-modal-label") Đăng nhập
+        div(class="modal-body")
+          form(class="form-horizontal" role="form")
+            div(class="form-group")
+              label(for="email" class="col-sm-2 control-label") Email
+              div(class="col-sm-10")
+                input(type="email" class="form-control" id="email" placeholder="Email")
+            div(class="form-group")
+              label(for="password" class="col-sm-2 control-label") Mật khẩu
+              div(class="col-sm-10")
+                input(type="password" class="form-control" id="password" placeholder="Mật khẩu")
+            div(class="form-group")
+              div(class="col-sm-offset-2 col-sm-10")
+                button(type="submit" class="btn btn-primary") Đăng nhập
+            a(href="/auth/google" style="color: red;") Đăng nhập với Google
+        //- div(class="modal-footer")
+
+  //- footer
+  div(class="footer")
+    div(class="container-fuild")
+      div(class="row")
+        h1(style="text-align: center") LiveCall

@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  audio(id="fvoid" controls)
+  
+  h5 Key của bạn
+  textarea(id="local-key" rows="8" cols="50")
+  h5 Nhập key máy bạn của bạn
+  textarea(id="friend-key" rows="8" cols="50")
+  br
+  button(type="submit" id="connect-button") Kết nối
+
+  //- javascript
+
+  script(src="/socket.io/socket.io.js")
+  script(src="/javascripts/bundle.js")
+  script(src="/javascripts/core.js")
