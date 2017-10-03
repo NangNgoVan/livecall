@@ -1,25 +1,6 @@
 extends layout
 
 block content
-  //- header bar
-  nav(class="nav navbar-default navbar-fixed-top" role="navigation" style="opacity: 0.9")
-    div(class="container")
-      div(class="navbar-header")
-        button(type="button" class="navbar-toggle" data-toggle="collapse"
-          data-target="#collapsed-menu")
-          span(class="sr-only") Toggle navigation
-          span(class="icon-bar")
-          span(class="icon-bar")
-          span(class="icon-bar")
-        a(class="navbar-brand" href="#") LiveCall
-      div(class="collapse navbar-collapse" id="collapsed-menu")
-        ul(class="nav navbar-nav navbar-right")
-          li(class="active")
-            a(href="#login-modal" data-toggle="modal") Đăng nhập
-          li
-            a(href="#") Đăng ký
-
-
   //- content
   div(class="container-fuild")
     div(class="row")
@@ -57,25 +38,59 @@ block content
           button(type="button" class="close" data-dismiss="modal")
             span(aria-hidden="true") &times;
             span(class="sr-only") Close
-          h4(class="modal-title" id="login-modal-label") Đăng nhập
+          //- h4(class="modal-title" id="login-modal-label") Đăng nhập
+          ul(class="nav nav-tabs" role="tablist")
+            li(class="active")
+              a(href="#login-tab" role="tab" data-toggle="tab")
+                b Đăng nhập
+            li
+              a(href="#register-tab" role="tab" data-toggle="tab")
+                b Đăng ký
         div(class="modal-body")
-          form(class="form-horizontal" role="form")
-            div(class="form-group")
-              label(for="email" class="col-sm-2 control-label") Email
-              div(class="col-sm-10")
-                input(type="email" class="form-control" id="email" placeholder="Email")
-            div(class="form-group")
-              label(for="password" class="col-sm-2 control-label") Mật khẩu
-              div(class="col-sm-10")
-                input(type="password" class="form-control" id="password" placeholder="Mật khẩu")
-            div(class="form-group")
-              div(class="col-sm-offset-2 col-sm-10")
-                button(type="submit" class="btn btn-primary") Đăng nhập
-            a(href="/auth/google" style="color: red;") Đăng nhập với Google
+          div(class="tab-content")
+            div(class="tab-pane active" id="login-tab")
+              form(class="form-horizontal" role="form" action="/login" method="POST")
+                div(class="form-group")
+                  label(for="email" class="col-sm-2 control-label") Email
+                  div(class="col-sm-10")
+                    input(type="email" class="form-control" name="email" placeholder="Email")
+                div(class="form-group")
+                  label(for="password" class="col-sm-2 control-label") Mật khẩu
+                  div(class="col-sm-10")
+                    input(type="password" class="form-control"
+                      name="password" placeholder="Mật khẩu")
+                div(class="form-group")
+                  div(class="col-sm-offset-2 col-sm-10")
+                    button(type="submit" class="btn btn-primary") Đăng nhập
+            div(class="tab-pane" id="register-tab")
+              form(class="form-horizontal" role="form" action="/signup" method="POST")
+                div(class="form-group")
+                  div(class="col-sm-6")
+                    input(type="text" class="form-control"
+                      name="firstname" placeholder="Tên")
+                  div(class="col-sm-6")
+                    input(type="text" class="form-control"
+                      name="lastname" placeholder="Họ")
+                div(class="form-group")
+                  div(class="col-sm-12")
+                    input(type="email" class="form-control"
+                      name="email" placeholder="Email")
+                div(class="form-group")
+                  div(class="col-sm-12")
+                    input(type="password" class="form-control"
+                      name="password" placeholder="Mật khẩu mới")
+                div(class="form-group")
+                  div(class="col-sm-12")
+                    button(class="btn btn-primary" style="width: 100%;") Tạo tài khoản mới
+              div(class="row")
+                p(style="text-align: center;")
+                  b Hoặc
+              div(class="row")
+                div(class="col-sm-6")
+                  p(style="text-align: center;")
+                    a(href="/auth/google" style="color: red;") Đăng ký với Google+
+                div(class="col-sm-6")
+                  p(style="text-align: center;")
+                    a(href="") Đăng ký với Facebook
+          
         //- div(class="modal-footer")
-
-  //- footer
-  div(class="footer")
-    div(class="container-fuild")
-      div(class="row")
-        h1(style="text-align: center") LiveCall

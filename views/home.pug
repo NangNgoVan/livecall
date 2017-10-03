@@ -1,17 +1,40 @@
 extends layout
 
 block content
-  audio(id="fvoid" controls)
+  div(class="calling-window" id="root")
+    div(class="calling-window-content")
+      span(class="close-btn" onClick="javascript:closeCallingDialog()") &times;
+      div(class="row" style="text-align: center;")
+        h4
+          b 1 cuộc gọi đến
+      div(class="row" style="text-align: center;")
+        img(src="images/call-icon.png" style="margin: 10px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);")
+      div(class="row" style="text-align: center; padding: 10px;")
+        h4 nangnv2641@gmail.com
+      div(class="row")
+        div(class="col-sm-6")
+          button(class="btn btn-primary" style="width: 100%") Nhấc máy
+        div(class="col-sm-6")
+          button(class="btn btn-danger" style="width: 100%" onClick="javascript:closeCallingDialog()") Từ chối
+  div(class="container" style="margin-top: 60px;")
+    div(class="row")
+      //- button(class="btn btn-primary" onClick="window.open('/home#1', 'newwindow', 'fullscreen=yes'); return false;") Call
+    div(class="row")
+      audio(id="fvoid" controls)
+      - userID = user.id
+      input(type="hidden" id="user-id" val=userID)
+      - email = user.email
+      input(type="hidden" id="user-email" val=email)
   
-  h5 Key của bạn
-  textarea(id="local-key" rows="8" cols="50")
-  h5 Nhập key máy bạn của bạn
-  textarea(id="friend-key" rows="8" cols="50")
-  br
-  button(type="submit" id="connect-button") Kết nối
-
+      h5 Key của bạn
+      textarea(id="local-key" rows="8" cols="50")
+      h5 Nhập key máy bạn của bạn
+      textarea(id="friend-key" rows="8" cols="50")
+      br
+      button(type="submit" id="connect-button") Kết nối
+  
   //- javascript
-
-  script(src="/socket.io/socket.io.js")
   script(src="/javascripts/bundle.js")
+  script(src="/javascripts/example.js")
   script(src="/javascripts/core.js")
+

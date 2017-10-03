@@ -3,7 +3,9 @@ var router = express.Router();
 
 /* GET intro page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Audio trực tuyến' });
+  if(!req.user)
+    res.render('index', { title: 'LiveCall', user: req.user });
+  else res.render('home', { title: 'LiveCall', user: req.user });;
 });
 
 module.exports = router;

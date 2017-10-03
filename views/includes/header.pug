@@ -1,0 +1,22 @@
+nav(class="nav navbar-inverse navbar-fixed-top" role="navigation" style="opacity: 0.95")
+  div(class="container")
+    div(class="navbar-header")
+      button(type="button" class="navbar-toggle" data-toggle="collapse"
+        data-target="#collapsed-menu")
+        span(class="sr-only") Toggle navigation
+        span(class="icon-bar")
+        span(class="icon-bar")
+        span(class="icon-bar")
+      a(class="navbar-brand" href="/") LiveCall
+    div(class="collapse navbar-collapse" id="collapsed-menu")
+      ul(class="nav navbar-nav navbar-right")
+        if !user
+          li
+            a(href="#login-modal" data-toggle="modal") Đăng nhập
+          li
+            a(href="#") Đăng ký
+        else
+          li
+            a(href="") #{user.email}
+          li
+            a(href="/logout") Đăng xuất

@@ -35,7 +35,20 @@ var io = require('socket.io')(server);
 
 io.on('connection', function(socket){
  console.log(socket.id);
- socket.emit('news', {data: 'Xin chào!'});
+ socket.on('socket-live-stream', function(data) {
+   console.log(data);
+ });
+
+ //make a phone call.
+socket.on('make-a-call', function(data){
+  console.log(data.token);
+  //process........
+  socket.broadcast.emit('wating-a-call', {from: data.from, to: data.to, token: data.token});
+});
+
+ socket.on('disconnect', function(){
+   console.log('disconnected!');
+ })
 });
 
 /**
