@@ -21,7 +21,7 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
-// custom
+/* custom */
 
 /**
  * Create Socket.
@@ -29,27 +29,82 @@ var server = http.createServer(app);
 
 var io = require('socket.io')(server);
 
+/* connections[socke.id] = sessionid */
+var connections = {};
+
 /**
  * Socket events.
  */
 
 io.on('connection', function(socket){
- console.log(socket.id);
- socket.on('socket-live-stream', function(data) {
-   console.log(data);
- });
+ //console.log(socket.id);
+ //cập nhật người dùng online.
+ //socket.emit('update-user-online', Object.keys(connections).length);
 
- //make a phone call.
-socket.on('make-a-call', function(data){
-  console.log(data.token);
-  //process........
-  socket.broadcast.emit('wating-a-call', {from: data.from, to: data.to, token: data.token});
+ /* save a sessionid  with socketid coresspond */
+  socket.on('user-data', function(udata) {
+   //console.log(udata._id);
+    if(!currentUserIsOnline(udata._id)) connections[socket.id] = udata;
+
+    console.log('Have ' + Object.keys(connections).length + ' connected');
+   
+    // cập nhật người dùng online
+    socket.emit('update-user-online', UsersOnline());
+      socket.broadcast.emit('update-user-online', UsersOnline());
+    });
+
+   //make a phone call.
+    socket.on('make-a-call', function(data){
+     //console.log(data.token);
+     // process........
+     socket.broadcast.emit('wating-a-call', {from: data.from, to: data.to, token: data.token});
+    });
+
+    //send token respond
+    socket.on('send-token-respord', function(data) {
+      socket.broadcast.emit('token-respord', {from: data.from, to: data.to, token: data.token});
+    });
+
+   socket.on('disconnect', function(){
+     console.log('disconnected!');
+     console.log(socket.id);
+     //delete connects
+     delete connections[socket.id];
+   //console.log('Have ' + Object.keys(connections).length + ' connected()');
+     socket.broadcast.emit('update-user-online', UsersOnline());
+   })
 });
 
- socket.on('disconnect', function(){
-   console.log('disconnected!');
- })
-});
+/*
+* cập nhật user online
+*/
+
+function getAllValuesOfHash(hash) {
+  var value = [];
+  for(var key in hash) {
+    value.push(hash[key]);
+  }
+  return value;
+}
+
+var User = require('../models/user');
+
+function UsersOnline() {
+  return getAllValuesOfHash(connections);
+}
+
+/*
+* check current user
+*/
+
+function currentUserIsOnline(sessionid) {
+  if (Object.keys(connections).length == 0) return false;
+  for(var key in connections) {
+    if(connections[key]._id.localeCompare(sessionid) == 0) return true;
+  }
+  return false;
+}
+
 
 /**
  * Listen on provided port, on all network interfaces.

@@ -18,35 +18,28 @@ var User = require('./models/user');
 //mongo client
 var mongoose = require('mongoose');
 
-mongoose.connect("mongodb://localhost:27017/testdb", {useMongoClient: true});
+var dbURL;
+if(process.env.NODE_ENV === 'production') {
+  dbURL = 'mongodb://'+process.env.DB_USER +':'+process.env.DB_PASS +'@ds161574.mlab.com:'+process.env.DB_PORT+'/'+process.env.DB_HOST;
+}
+else dbURL = "mongodb://localhost:27017/testdb";
+console.log(dbURL);
+
+mongoose.connect(dbURL, {useMongoClient: true});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {
-  // we're connected!
   console.log('db connected!');
 });
 
 //passport-google-api
 var passport = require('passport');
-//var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-
 //login-local
 
 //config passport.
 var configPassport = require('./config/passportcfg');
 configPassport();
-
 //
-// passport.use(new GoogleStrategy({
-//     clientID: process.env.GOOGLE_CLIENT_ID,
-//     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-//     callbackURL: process.env.GOOGLE_CALLBACK_URL
-//   },
-//   function(accessToken, refreshToken, profile, done) {
-
-//     //console.log(profile.id);
-//   }
-// ));
 
 var index = require('./routes/index');
 
@@ -55,6 +48,9 @@ var login = require('./routes/login');
 
 //signup router
 var signup = require('./routes/signup');
+
+//account activation
+var activationAccount = require('./routes/activation');
 
 var app = express();
 
@@ -87,50 +83,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/login', login);
 app.use('/signup', signup);
+app.use('/account_activation', activationAccount);
 
 /* GET logout */
 app.get('/logout', function(req, res){
   req.logout();
   res.redirect('/');
 })
-
-
-//GET /auth/google
-// app.use('/auth/google', passport.authenticate('google',
-//   { scope: ['profile', 'email'] }));
-
-//GET /auth/google/callback
-// app.get('/auth/google/callback', 
-//   passport.authenticate('google', { failureRedirect: '/' }),
-//   function(req, res) {
-//     res.redirect('/home');
-//   }
-// );
-
-// var  LocalStrategy = require('passport-local').Strategy;
-// passport.use(new LocalStrategy({
-// 	usernameField: 'email',
-// 	passwordField: 'password'
-// },
-//   function(email, password, done) {
-//     User.findOne({ email: email }, function(err, user) {
-//       if (err) { return done(err); }
-//       if (!user) {
-//         return done(null, false, { message: 'Incorrect username.' });
-//       }
-//       if (!user.validPassword(password)) {
-//         return done(null, false, { message: 'Incorrect password.' });
-//       }
-//       return done(null, user);
-//     });
-//   }
-// ));
-// app.post('/login',
-//   passport.authenticate('local', { successRedirect: '/home',
-//                                    failureRedirect: '/',
-//                                    failureFlash: true })
-// );
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
