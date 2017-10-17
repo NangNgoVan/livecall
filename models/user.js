@@ -33,7 +33,7 @@ userSchema.pre('save', function(done) {
   if(!this.created_at) this.created_at = currentDate;
 
   //create random activate_at string.
-  var activeRandomString = RandomString(24);
+  var activeRandomString = RandomString(60);
   this.activate_digest = activeRandomString;
   
   bcrypt.genSalt(12, function(err, salt) {

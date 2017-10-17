@@ -33112,257 +33112,425 @@ var gumStream = null;
 var p = null;
 
 var App = function (_React$Component) {
-	_inherits(App, _React$Component);
+		_inherits(App, _React$Component);
 
-	function App(props) {
-		_classCallCheck(this, App);
+		function App(props) {
+				_classCallCheck(this, App);
 
-		var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+				var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
 
-		_this.state = { items: [], callstate: 'none', token: null, current_user: { _id: null } };
+				_this.state = { items: [], callstate: 'none', token: null, current_user: { _id: null }, messages: [], value: '' };
 
-		_this._onlineUser = _this._onlineUser.bind(_this);
+				_this._onlineUser = _this._onlineUser.bind(_this);
 
-		_this._call = _this._call.bind(_this);
-		_this._commingCall = _this._commingCall.bind(_this);
-		_this._endCall = _this._endCall.bind(_this);
-		_this._receviceCall = _this._receviceCall.bind(_this);
+				_this._call = _this._call.bind(_this);
+				_this._commingCall = _this._commingCall.bind(_this);
+				_this._endCall = _this._endCall.bind(_this);
+				_this._receviceCall = _this._receviceCall.bind(_this);
 
-		_this._openStream = _this._openStream.bind(_this);
-		_this._closeStream = _this._closeStream.bind(_this);
+				_this._openStream = _this._openStream.bind(_this);
+				_this._closeStream = _this._closeStream.bind(_this);
 
-		_this._loadContentPane = _this._loadContentPane.bind(_this);
-		return _this;
-	}
+				_this._loadContentPane = _this._loadContentPane.bind(_this);
 
-	_createClass(App, [{
-		key: '_onlineUser',
-		value: function _onlineUser(data) {
-			this.setState({ items: data });
+				_this._sendMessage = _this._sendMessage.bind(_this);
+				_this._handleInputMessage = _this._handleInputMessage.bind(_this);
+				return _this;
 		}
-	}, {
-		key: '_call',
-		value: function _call(caller) {
-			this.setState({ callstate: 'connect' });
-			this._openStream({ iscaller: true, token: this.state.token });
-		}
-	}, {
-		key: '_receviceCall',
-		value: function _receviceCall() {
-			this.setState({ callstate: 'active' });
-			this._openStream({ iscaller: false, token: this.state.token });
-		}
-	}, {
-		key: '_endCall',
-		value: function _endCall() {
-			this.setState({ callstate: 'none', token: null });
-			this._closeStream();
-		}
-	}, {
-		key: '_commingCall',
-		value: function _commingCall(data) {
-			alert(data.token);
-			if (this.state.callstate === 'connect') {
-				this.setState({ callstate: 'active', token: data.token });
-				if (p !== null) p.signal(data.token);
-				// return;
-			} else if (this.state.callstate === 'none') {
-				this.setState({ callstate: 'comming', token: data.token });
-			}
-		}
-	}, {
-		key: '_loadContentPane',
-		value: function _loadContentPane(user) {
-			this.setState({ current_user: user });
-		}
-	}, {
-		key: 'componentDidMount',
-		value: function componentDidMount() {
-			var _this2 = this;
 
-			socket.on('update-user-online', function (data) {
-				return _this2._onlineUser(data);
-			});
-			socket.on('wating-a-call', this._commingCall);
-		}
-	}, {
-		key: '_openStream',
-		value: function _openStream(config) {
-			var self = this;
+		_createClass(App, [{
+				key: '_onlineUser',
+				value: function _onlineUser(data) {
+						this.setState({ items: data });
+				}
+		}, {
+				key: '_call',
+				value: function _call(caller) {
+						this.setState({ callstate: 'connect' });
+						this._openStream({ iscaller: true, token: this.state.token });
+				}
+		}, {
+				key: '_receviceCall',
+				value: function _receviceCall() {
+						this.setState({ callstate: 'active' });
+						this._openStream({ iscaller: false, token: this.state.token });
+				}
+		}, {
+				key: '_endCall',
+				value: function _endCall() {
+						this.setState({ callstate: 'none', token: null });
+						this._closeStream();
+				}
+		}, {
+				key: '_commingCall',
+				value: function _commingCall(data) {
+						alert(data.token);
+						if (this.state.callstate === 'connect') {
+								this.setState({ callstate: 'active', token: data.token });
+								if (p !== null) p.signal(data.token);
+								// return;
+						} else if (this.state.callstate === 'none') {
+								this.setState({ callstate: 'comming', token: data.token });
+						}
+				}
+		}, {
+				key: '_loadContentPane',
+				value: function _loadContentPane(user) {
+						this.setState({ current_user: user });
+				}
+		}, {
+				key: 'componentDidMount',
+				value: function componentDidMount() {
+						var _this2 = this;
 
-			if (!_simplePeer2.default.WEBRTC_SUPPORT) {
-				alert('Trình duyệt không hỗ trợ!');
-				return;
-			}
+						socket.on('update:user:online', function (data) {
+								return _this2._onlineUser(data);
+						});
+						socket.on('wating:call', this._commingCall);
+				}
+		}, {
+				key: '_openStream',
+				value: function _openStream(config) {
+						var self = this;
 
-			navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(function (stream) {
+						if (!_simplePeer2.default.WEBRTC_SUPPORT) {
+								alert('Trình duyệt không hỗ trợ!');
+								return;
+						}
 
-				gumStream = stream;
-				p = new _simplePeer2.default({ initiator: config.iscaller, trickle: false, stream: stream });
+						navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(function (stream) {
 
-				p.on('error', function (e) {
-					console.log('error', e);
-				});
+								gumStream = stream;
+								p = new _simplePeer2.default({ initiator: config.iscaller, trickle: false, stream: stream });
 
-				if (config.token != null) p.signal(config.token);
+								p.on('error', function (e) {
+										console.log('error', e);
+								});
 
-				p.on('signal', function (token) {
-					console.log(JSON.stringify(token));
-					if (!config.iscaller) {
-						alert('gửi lại token!');
-					}
+								if (config.token != null) p.signal(config.token);
 
-					socket.emit('make-a-call', { from: "1", to: "2", token: JSON.stringify(token) });
-				});
+								p.on('signal', function (token) {
+										console.log(JSON.stringify(token));
+										if (!config.iscaller) {
+												alert('gửi lại token!');
+										}
 
-				p.on('stream', function (fstream) {
-					var audio = document.getElementById('voice-audio');
-					audio.src = window.URL.createObjectURL(fstream);
-					audio.play();
-				});
+										socket.emit('make:call', { from: "1", to: "2", token: JSON.stringify(token) });
+								});
 
-				p.on('close', function () {
-					self._closeStream();
-					self.setState({ callstate: 'none', token: null });
-				});
-			}).catch(function (e) {
-				alert(e);
-				self._closeStream();
-				self.setState({ callstate: 'none', token: null });
-			});
-		}
-	}, {
-		key: '_closeStream',
-		value: function _closeStream() {
-			if (gumStream !== null && gumStream.active) {
-				var track = gumStream.getTracks()[0];
-				track.stop();
-			}
+								p.on('stream', function (fstream) {
+										var audio = document.getElementById('voice-audio');
+										audio.src = window.URL.createObjectURL(fstream);
+										audio.play();
+								});
 
-			if (p !== null) {
-				p.destroy();
-				p = null;
-			}
-		}
-	}, {
-		key: 'render',
-		value: function render() {
-			var _this3 = this;
+								p.on('close', function () {
+										self._closeStream();
+										self.setState({ callstate: 'none', token: null });
+								});
+						}).catch(function (e) {
+								alert(e);
+								self._closeStream();
+								self.setState({ callstate: 'none', token: null });
+						});
+				}
+		}, {
+				key: '_closeStream',
+				value: function _closeStream() {
+						if (gumStream !== null && gumStream.active) {
+								var track = gumStream.getTracks()[0];
+								track.stop();
+						}
 
-			return _react2.default.createElement(
-				'div',
-				{ className: 'wrapper' },
-				_react2.default.createElement(
-					'nav',
-					{ id: 'sidebar' },
-					_react2.default.createElement(
-						'div',
-						{ className: 'sidebar-header' },
-						_react2.default.createElement('h4', null)
-					),
-					_react2.default.createElement(
-						'div',
-						{ className: 'sidebar-content' },
-						_react2.default.createElement(
-							'ul',
-							{ className: 'list-unstyled components' },
-							this.state.items.map(function (item) {
-								return _react2.default.createElement(
-									'li',
-									{ key: item._id },
-									_react2.default.createElement(
-										'a',
-										{ href: 'javascript:void(0);', onClick: function onClick() {
-												return _this3._loadContentPane(item);
-											} },
-										item.firstname,
-										' ',
-										item.lastname
-									)
-								);
-							})
-						)
-					),
-					_react2.default.createElement(
-						'ul',
-						{ className: 'list-unstyled CTAs' },
-						_react2.default.createElement(
-							'li',
-							null,
-							_react2.default.createElement(
-								'a',
-								{ className: 'download', href: '#' },
-								'Th\xF4ng tin'
-							)
-						)
-					)
-				),
-				_react2.default.createElement(
-					'div',
-					{ id: 'content' },
-					_react2.default.createElement(
-						'nav',
-						{ className: 'nav navbar-default' },
-						_react2.default.createElement(
-							'div',
-							{ className: 'container-fuild' },
-							_react2.default.createElement(
+						if (p !== null) {
+								p.destroy();
+								p = null;
+						}
+				}
+		}, {
+				key: '_sendMessage',
+				value: function _sendMessage(e) {
+						var _this3 = this;
+
+						e.preventDefault();
+						if (!this.state.value.length) {
+								return;
+						}
+						this.setState(function (prevState) {
+								return {
+										messages: prevState.messages.concat({ value: _this3.state.value, time: Date().toLocaleString() }), value: ''
+								};
+						});
+				}
+		}, {
+				key: '_handleInputMessage',
+				value: function _handleInputMessage(event) {
+						this.setState({ value: event.target.value });
+				}
+		}, {
+				key: 'render',
+				value: function render() {
+						var _this4 = this;
+
+						return _react2.default.createElement(
 								'div',
-								{ className: 'navbar-header' },
+								{ className: 'container wrapper' },
 								_react2.default.createElement(
-									'button',
-									{ type: 'button', id: 'sidebarCollapse', className: 'navbar-btn' },
-									_react2.default.createElement('span', null),
-									_react2.default.createElement('span', null),
-									_react2.default.createElement('span', null)
-								)
-							),
-							_react2.default.createElement(
-								'div',
-								{ className: 'collapse navbar-collapse', id: 'caller-manager' },
+										'div',
+										{ className: 'row' },
+										_react2.default.createElement(
+												'div',
+												{ className: 'col-md-3 chat_sidebar full-height' },
+												_react2.default.createElement(
+														'div',
+														{ className: 'row' },
+														_react2.default.createElement(
+																'div',
+																{ id: 'custom-search-input' },
+																_react2.default.createElement(
+																		'div',
+																		{ className: 'input-group col-md-12' },
+																		_react2.default.createElement('input', { type: 'text', className: '  search-query form-control', placeholder: 'Conversation' }),
+																		_react2.default.createElement(
+																				'button',
+																				{ className: 'btn btn-danger', type: 'button' },
+																				_react2.default.createElement('span', { className: ' glyphicon glyphicon-search' })
+																		)
+																)
+														),
+														_react2.default.createElement(
+																'div',
+																{ className: 'dropdown all_conversation' },
+																_react2.default.createElement(
+																		'button',
+																		{ className: 'dropdown-toggle', type: 'button', id: 'dropdownMenu2', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
+																		_react2.default.createElement('i', { className: 'fa fa-weixin', 'aria-hidden': 'true' }),
+																		'T\u1EA5t c\u1EA3 h\u1ED9i tho\u1EA1i',
+																		_react2.default.createElement('span', { className: 'caret pull-right' })
+																),
+																_react2.default.createElement(
+																		'ul',
+																		{ className: 'dropdown-menu', 'aria-labelledby': 'dropdownMenu2' },
+																		_react2.default.createElement(
+																				'li',
+																				null,
+																				_react2.default.createElement(
+																						'a',
+																						{ href: '#' },
+																						' T\xECm li\xEAn h\u1EC7 m\u1EDBi '
+																				)
+																		),
+																		_react2.default.createElement(
+																				'li',
+																				null,
+																				_react2.default.createElement(
+																						'a',
+																						{ href: '#' },
+																						'Another action'
+																				)
+																		)
+																)
+														),
+														_react2.default.createElement(
+																'div',
+																{ className: 'member_list' },
+																_react2.default.createElement(
+																		'ul',
+																		{ className: 'list-unstyled' },
+																		this.state.items.map(function (item) {
+																				return _react2.default.createElement(
+																						'li',
+																						{ className: 'left clearfix', key: item._id },
+																						_react2.default.createElement(
+																								'span',
+																								{ className: 'chat-img pull-left' },
+																								_react2.default.createElement('img', { src: 'https://lh6.googleusercontent.com/-y-MY2satK-E/AAAAAAAAAAI/AAAAAAAAAJU/ER_hFddBheQ/photo.jpg', alt: 'User Avatar', className: 'img-circle' })
+																						),
+																						_react2.default.createElement(
+																								'div',
+																								{ className: 'chat-body clearfix' },
+																								_react2.default.createElement(
+																										'div',
+																										{ className: 'header_sec' },
+																										_react2.default.createElement(
+																												'strong',
+																												{ className: 'primary-font' },
+																												item.firstname,
+																												' ',
+																												item.lastname
+																										),
+																										_react2.default.createElement(
+																												'strong',
+																												{ className: 'pull-right' },
+																												'09:45AM'
+																										)
+																								),
+																								_react2.default.createElement(
+																										'div',
+																										{ className: 'contact_sec' },
+																										_react2.default.createElement(
+																												'strong',
+																												{ className: 'primary-font' },
+																												item.email
+																										),
+																										' ',
+																										_react2.default.createElement(
+																												'span',
+																												{ className: 'badge pull-right' },
+																												'3'
+																										)
+																								)
+																						)
+																				);
+																		})
+																)
+														)
+												)
+										),
+										_react2.default.createElement(
+												'div',
+												{ className: 'col-md-9 message_section full-height' },
+												_react2.default.createElement(
+														'div',
+														{ className: 'row' },
+														_react2.default.createElement(
+																'div',
+																{ className: 'new_message_head' },
+																_react2.default.createElement(
+																		'div',
+																		{ className: 'pull-left' },
+																		_react2.default.createElement(
+																				'button',
+																				null,
+																				_react2.default.createElement('i', { className: 'fa fa-plus-square-o', 'aria-hidden': 'true' }),
+																				' Tin nh\u1EAFn m\u1EDBi'
+																		)
+																),
+																_react2.default.createElement(
+																		'div',
+																		{ className: 'pull-right' },
+																		_react2.default.createElement(
+																				'div',
+																				{ className: 'dropdown' },
+																				_react2.default.createElement(
+																						'button',
+																						{ className: 'dropdown-toggle', type: 'button', id: 'dropdownMenu1', 'data-toggle': 'dropdown', 'aria-haspopup': 'true', 'aria-expanded': 'false' },
+																						_react2.default.createElement('i', { className: 'fa fa-cogs', 'aria-hidden': 'true' }),
+																						'  C\xE0i \u0111\u1EB7t',
+																						_react2.default.createElement('span', { className: 'caret' })
+																				),
+																				_react2.default.createElement(
+																						'ul',
+																						{ className: 'dropdown-menu dropdown-menu-right', 'aria-labelledby': 'dropdownMenu1' },
+																						_react2.default.createElement(
+																								'li',
+																								null,
+																								_react2.default.createElement(
+																										'a',
+																										{ href: '#' },
+																										'Action'
+																								)
+																						),
+																						_react2.default.createElement(
+																								'li',
+																								null,
+																								_react2.default.createElement(
+																										'a',
+																										{ href: '#' },
+																										'Profile'
+																								)
+																						),
+																						_react2.default.createElement(
+																								'li',
+																								null,
+																								_react2.default.createElement(
+																										'a',
+																										{ href: '#' },
+																										'Logout'
+																								)
+																						)
+																				)
+																		)
+																)
+														),
+														_react2.default.createElement(
+																'div',
+																{ className: 'chat_area' },
+																_react2.default.createElement(
+																		'ul',
+																		{ className: 'list-unstyled' },
+																		this.state.messages.map(function (message, index) {
+																				return _react2.default.createElement(
+																						'li',
+																						{ className: 'left clearfix', key: index },
+																						_react2.default.createElement(
+																								'span',
+																								{ className: 'chat-img1 pull-left' },
+																								_react2.default.createElement('img', { src: 'https://lh6.googleusercontent.com/-y-MY2satK-E/AAAAAAAAAAI/AAAAAAAAAJU/ER_hFddBheQ/photo.jpg', alt: 'User Avatar', className: 'img-circle' })
+																						),
+																						_react2.default.createElement(
+																								'div',
+																								{ className: 'chat-body1 clearfix' },
+																								_react2.default.createElement(
+																										'p',
+																										null,
+																										message.value
+																								),
+																								_react2.default.createElement(
+																										'div',
+																										{ className: 'chat_time pull-right', style: { fontSize: '10px' } },
+																										message.time
+																								)
+																						)
+																				);
+																		})
+																)
+														),
+														_react2.default.createElement(
+																'form',
+																{ onSubmit: this._sendMessage },
+																_react2.default.createElement(
+																		'div',
+																		{ className: 'message_write' },
+																		_react2.default.createElement('input', { className: 'form-control', placeholder: 'type a message', value: this.state.value,
+																				onChange: this._handleInputMessage }),
+																		_react2.default.createElement('div', { className: 'clearfix' }),
+																		_react2.default.createElement(
+																				'div',
+																				{ className: 'chat_bottom' },
+																				_react2.default.createElement(
+																						'a',
+																						{ onClick: function onClick(isCaller) {
+																										return _this4._call(true);
+																								}, href: 'javascript:void(0);', className: 'pull-left' },
+																						_react2.default.createElement('img', { src: '/images/audio_call.png', className: 'call_button' })
+																				),
+																				_react2.default.createElement(
+																						'a',
+																						{ href: '#', className: 'pull-left' },
+																						_react2.default.createElement('img', { src: '/images/video_call.png', className: 'call_button' })
+																				),
+																				_react2.default.createElement(
+																						'button',
+																						{ className: 'pull-right btn btn-success' },
+																						'G\u1EEDi'
+																				)
+																		)
+																)
+														)
+												)
+										)
+								),
 								_react2.default.createElement(
-									'ul',
-									{ className: 'nav navbar-nav navbar-right' },
-									_react2.default.createElement(
-										'li',
-										null,
-										_react2.default.createElement(
-											'a',
-											{ onClick: function onClick(isCaller) {
-													return _this3._call(true);
-												}, href: 'javascript:void(0);' },
-											'G\u1ECDi audio'
-										)
-									),
-									_react2.default.createElement(
-										'li',
-										null,
-										_react2.default.createElement(
-											'a',
-											{ href: 'javascript:void(0);' },
-											'Chat video'
-										)
-									)
+										'div',
+										{ id: 'modal' },
+										_react2.default.createElement(_callmanager2.default, { callstate: this.state.callstate, cancel: this._endCall, acept: this._receviceCall })
 								)
-							)
-						)
-					),
-					_react2.default.createElement(
-						'div',
-						{ id: 'sidebar-content-pane' },
-						this.state.current_user._id
-					),
-					_react2.default.createElement(
-						'div',
-						{ id: 'modal' },
-						_react2.default.createElement(_callmanager2.default, { callstate: this.state.callstate, cancel: this._endCall, acept: this._receviceCall })
-					)
-				)
-			);
-		}
-	}]);
+						);
+				}
+		}]);
 
-	return App;
+		return App;
 }(_react2.default.Component);
 
 _reactDom2.default.render(_react2.default.createElement(App, null), document.getElementById('main'));

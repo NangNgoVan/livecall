@@ -10,11 +10,11 @@ var transporter = nodemailer.createTransport({
 
 
 module.exports.send = function(mailOptions) {
-	transporter.sendMail(mailOptions, function(err, info){
+	return transporter.sendMail(mailOptions, function(err, info){
 	  if(err) {
 		console.log(err);
 	  } else {
 		console.log('Email sent!');
 	  }
-  });
+  	});
 };

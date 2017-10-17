@@ -38,8 +38,6 @@ var connections = {};
 
 io.on('connection', function(socket){
  //console.log(socket.id);
- //cập nhật người dùng online.
- //socket.emit('update-user-online', Object.keys(connections).length);
 
  /* save a sessionid  with socketid coresspond */
   socket.on('user-data', function(udata) {
@@ -49,20 +47,14 @@ io.on('connection', function(socket){
     console.log('Have ' + Object.keys(connections).length + ' connected');
    
     // cập nhật người dùng online
-    socket.emit('update-user-online', UsersOnline());
-      socket.broadcast.emit('update-user-online', UsersOnline());
+    socket.emit('update:user:online', UsersOnline());
+    // socket.broadcast.emit('update:user:online', UsersOnline());
     });
 
    //make a phone call.
-    socket.on('make-a-call', function(data){
+    socket.on('make:call', function(data){
      //console.log(data.token);
-     // process........
-     socket.broadcast.emit('wating-a-call', {from: data.from, to: data.to, token: data.token});
-    });
-
-    //send token respond
-    socket.on('send-token-respord', function(data) {
-      socket.broadcast.emit('token-respord', {from: data.from, to: data.to, token: data.token});
+     socket.broadcast.emit('wating:call', {from: data.from, to: data.to, token: data.token});
     });
 
    socket.on('disconnect', function(){
@@ -71,7 +63,7 @@ io.on('connection', function(socket){
      //delete connects
      delete connections[socket.id];
    //console.log('Have ' + Object.keys(connections).length + ' connected()');
-     socket.broadcast.emit('update-user-online', UsersOnline());
+     socket.broadcast.emit('update:user:online', UsersOnline());
    })
 });
 
